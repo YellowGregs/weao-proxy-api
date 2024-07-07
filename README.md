@@ -1,10 +1,10 @@
 # WEAO Proxy API
 
-This project is a proxy server designed to access the [Whatexpsare.online](https://whatexpsare.online/) API by adding the required `User-Agent` header to requests. This will ensure that your requests to the API are not blocked by Cloudflare.
+This was something I wanted to code, and this is proxy server is designed to access the [Whatexpsare.online](https://whatexpsare.online/) API by adding the required `User-Agent` header to requests. This will ensure that your requests to the API are not blocked by Cloudflare.
 
 ## Purpose
 
-When I was developing a simple template website using the Whatexpsare.online API, I encountered issues with requests being blocked due to CORS restrictions. After discussing this with the API owner, we couldn't find a solution but he did say he will fix the CORS Issue. Therefore, with their permission, I created this open-source proxy server to make the API accessible to everyone without such restrictions.
+When I was developing a simple template website using the Whatexpsare.online API, I encountered issues with the requests being blocked due to CORS restrictions. After discussing this with the API owner about the problem, we couldn't find a solution but he did say he will fix the CORS Issue. Therefore, with his permission, I created this open-source proxy server to make the API accessible to everyone without restrictions.
 
 ## Getting Started
 
@@ -35,7 +35,7 @@ When I was developing a simple template website using the Whatexpsare.online API
 
 ### Usage
 
-To use the proxy server, send your requests to the following endpoints:
+To use the proxy server, send your requests to these endpoints:
 
 - Fetch current Roblox versions: `http://localhost:3000/api/versions/current`
 - Fetch future Roblox versions: `http://localhost:3000/api/versions/future`
@@ -45,5 +45,5 @@ These endpoints will accept your requests to the [Whatexpsare.online](https://wh
 
 ## License
 
-This project is free to use. Note that I am not the owner of the actual API.
+This project is free to use. Note that I am not the owner of the actual API, I made this proxy API for myself to code a simple website template of there API.
 
