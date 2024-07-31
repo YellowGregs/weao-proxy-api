@@ -39,6 +39,21 @@ app.get('/api/versions/future', async (req, res) => {
     }
 });
 
+app.get('/api/versions/android', async (req, res) => {
+    const url = 'https://whatexpsare.online/api/versions/android';
+    try {
+        const response = await fetch(url, {
+            headers: {
+                'User-Agent': USER_AGENT
+            }
+        });
+        const data = await response.json();
+        res.json(data);
+    } catch (error) {
+        res.status(500).json({ error: 'Error fetching data' });
+    }
+});
+
 app.get('/api/status/exploits', async (req, res) => {
     const url = 'https://whatexpsare.online/api/status/exploits';
     try {
