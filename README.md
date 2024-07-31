@@ -40,8 +40,11 @@ To use the proxy server, send your requests to these endpoints:
 - Fetch current Roblox versions: `http://localhost:3000/api/versions/current`
 - Fetch future Roblox versions: `http://localhost:3000/api/versions/future`
 - Fetch exploit status: `http://localhost:3000/api/status/exploits`
+- Fetch Android latest version `http://localhost:3000/api/versions/android`
 
 These endpoints will accept your requests to the [Whatexpsare.online](https://whatexpsare.online/) API with the correct `User-Agent` headers and return the response.
+
+WEAO Documentation: [WEAO Documentation](https://docs.weao.xyz/)
 
 ## License
 
