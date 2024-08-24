@@ -69,6 +69,22 @@ app.get('/api/status/exploits', async (req, res) => {
     }
 });
 
+app.get('/api/status/exploits/:exploit', async (req, res) => {
+    const exploit = req.params.exploit;
+    const url = `https://whatexpsare.online/api/status/exploits/${encodeURIComponent(exploit)}`;
+    try {
+        const response = await fetch(url, {
+            headers: {
+                'User-Agent': USER_AGENT
+            }
+        });
+        const data = await response.json();
+        res.json(data);
+    } catch (error) {
+        res.status(500).json({ error: 'Error fetching data' });
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
