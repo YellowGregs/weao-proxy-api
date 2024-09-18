@@ -1,90 +1,55 @@
 import express from 'express';
 import fetch from 'node-fetch';
 import cors from 'cors';
+import rateLimit from 'express-rate-limit'; 
+import morgan from 'morgan'; 
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const USER_AGENT = 'WEAO-3PService';  
+const BASE_URL = 'https://whatexpsare.online/api';
 
-app.use(cors());  // This will Enable CORS for all routes of the endpoints.
+app.use(cors());  // enable CORS for all routes that's all
+app.use(morgan('dev'));  // Logs the requests
 
-const USER_AGENT = 'WEAO-3PService'; // this is the header user agent so cloudflare won't block the request.
+// rate limit 
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, 
+    max: 100,  
+    message: { error: 'Too many requests, please try again later.' }
+});
+app.use(limiter);
 
-app.get('/api/versions/current', async (req, res) => {
-    const url = 'https://whatexpsare.online/api/versions/current';
+const fetchData = async (endpoint, res) => {
+    const url = `${BASE_URL}${endpoint}`;
     try {
         const response = await fetch(url, {
-            headers: {
-                'User-Agent': USER_AGENT
-            }
+            headers: { 'User-Agent': USER_AGENT }
         });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error. status: ${response.status}`);
+        }
+
         const data = await response.json();
-        res.json(data);
+        return res.json(data);
     } catch (error) {
-        res.status(500).json({ error: 'Error fetching data' });
+        console.error(`Error fetching ${url}:`, error.message);
+        return res.status(500).json({ error: error.message || 'Error fetching data' });
     }
+};
+
+// routes
+app.get('/api/versions/current', (req, res) => fetchData('/versions/current', res));
+
+app.get('/api/versions/future', (req, res) => fetchData('/versions/future', res));
+
+app.get('/api/versions/android', (req, res) => fetchData('/versions/android', res));
+
+app.get('/api/status/exploits', (req, res) => fetchData('/status/exploits', res));
+
+app.get('/api/status/exploits/:exploit', (req, res) => {
+    const exploit = encodeURIComponent(req.params.exploit);
+    fetchData(`/status/exploits/${exploit}`, res);
 });
 
-app.get('/api/versions/future', async (req, res) => {
-    const url = 'https://whatexpsare.online/api/versions/future';
-    try {
-        const response = await fetch(url, {
-            headers: {
-                'User-Agent': USER_AGENT
-            }
-        });
-        const data = await response.json();
-        res.json(data);
-    } catch (error) {
-        res.status(500).json({ error: 'Error fetching data' });
-    }
-});
-
-app.get('/api/versions/android', async (req, res) => {
-    const url = 'https://whatexpsare.online/api/versions/android';
-    try {
-        const response = await fetch(url, {
-            headers: {
-                'User-Agent': USER_AGENT
-            }
-        });
-        const data = await response.json();
-        res.json(data);
-    } catch (error) {
-        res.status(500).json({ error: 'Error fetching data' });
-    }
-});
-
-app.get('/api/status/exploits', async (req, res) => {
-    const url = 'https://whatexpsare.online/api/status/exploits';
-    try {
-        const response = await fetch(url, {
-            headers: {
-                'User-Agent': USER_AGENT
-            }
-        });
-        const data = await response.json();
-        res.json(data);
-    } catch (error) {
-        res.status(500).json({ error: 'Error fetching data' });
-    }
-});
-
-app.get('/api/status/exploits/:exploit', async (req, res) => {
-    const exploit = req.params.exploit;
-    const url = `https://whatexpsare.online/api/status/exploits/${encodeURIComponent(exploit)}`;
-    try {
-        const response = await fetch(url, {
-            headers: {
-                'User-Agent': USER_AGENT
-            }
-        });
-        const data = await response.json();
-        res.json(data);
-    } catch (error) {
-        res.status(500).json({ error: 'Error fetching data' });
-    }
-});
-
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+export default app;
