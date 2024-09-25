@@ -52,4 +52,6 @@ app.get('/api/status/exploits/:exploit', (req, res) => {
     fetchData(`/status/exploits/${exploit}`, res);
 });
 
+app.get('/api/health', (req, res) => fetchData('/health', res));
+
 export default app;
