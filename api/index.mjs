@@ -8,6 +8,9 @@ const app = express();
 const USER_AGENT = 'WEAO-3PService';  
 const BASE_URL = 'https://whatexpsare.online/api';
 
+//added this since a error kept popping up in the vercel log
+app.set('trust proxy', true);
+
 app.use(cors());  // enable CORS for all routes that's all
 app.use(morgan('dev'));  // Logs the requests
 
