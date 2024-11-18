@@ -9,28 +9,32 @@ const USER_AGENT = 'WEAO-3PService';
 const BASE_URL = 'https://whatexpsare.online/api';
 
 //added this since a error kept popping up in the vercel log
-app.set('trust proxy', true);
+app.set('trust proxy', 1);
 
 app.use(cors());  // enable CORS for all routes that's all
 app.use(morgan('dev'));  // Logs the requests
 
 // rate limit 
 const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, 
-    max: 100,  
-    message: { error: 'Too many requests, please try again later.' }
+    windowMs: 60 * 1000, // 1 minute
+    max: 50, // 50 requests per minute as a safe limit (:shrug:)
+    message: { error: 'Too many requests, please try again later.' },
 });
 app.use(limiter);
 
 const fetchData = async (endpoint, res) => {
     const url = `${BASE_URL}${endpoint}`;
     try {
+        console.log(`Fetching URL: ${url}`);
         const response = await fetch(url, {
-            headers: { 'User-Agent': USER_AGENT }
+            headers: { 
+                'User-Agent': USER_AGENT,
+                'Accept': 'application/json',
+            },
         });
 
         if (!response.ok) {
-            throw new Error(`HTTP error. status: ${response.status}`);
+            return res.status(response.status).json({ error: `HTTP error. status: ${response.status}` });
         }
 
         const data = await response.json();
@@ -56,5 +60,10 @@ app.get('/api/status/exploits/:exploit', (req, res) => {
 });
 
 app.get('/api/health', (req, res) => fetchData('/health', res));
+
+// this is random dont ask
+// app.get('/', (req, res) => {
+//     res.status(403).json({ error: 'index page is restricted.' });
+// });
 
 export default app;
