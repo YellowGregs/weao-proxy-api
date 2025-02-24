@@ -8,16 +8,15 @@ const app = express();
 const USER_AGENT = 'WEAO-3PService';  
 const BASE_URL = 'https://whatexpsare.online/api';
 
-//added this since a error kept popping up in the vercel log
 app.set('trust proxy', 1);
 
-app.use(cors());  // enable CORS for all routes that's all
-app.use(morgan('dev'));  // Logs the requests
+app.use(cors());
+app.use(morgan('dev'));
 
 // rate limit 
 const limiter = rateLimit({
     windowMs: 60 * 1000, // 1 minute
-    max: 50, // 50 requests per minute as a safe limit (:shrug:)
+    max: 50, // 50 requests
     message: { error: 'Too many requests, please try again later.' },
 });
 app.use(limiter);
