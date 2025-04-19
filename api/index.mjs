@@ -21,30 +21,43 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-const fetchData = async (endpoint, res) => {
-    const url = `${BASE_URL}${endpoint}`;
-    try {
-        console.log(`Fetching URL: ${url}`);
-        const response = await fetch(url, {
-            headers: { 
-                'User-Agent': USER_AGENT,
-                'Accept': 'application/json',
-            },
-        });
+/**
+ * @param {string} endpointOrUrl  – if isFullUrl===false, this is appended to BASE_URL; otherwise it will be treated as the full URL.
+ * @param {object} res            – Express response object
+ * @param {boolean} [isFullUrl]   – set to true to treat endpointOrUrl as a complete URL
+ */
+const fetchData = async (endpointOrUrl, res, isFullUrl = false) => {
+  const url = isFullUrl
+    ? endpointOrUrl
+    : `${BASE_URL}${endpointOrUrl}`;
 
-        if (!response.ok) {
-            return res.status(response.status).json({ error: `HTTP error. status: ${response.status}` });
-        }
+  try {
+    console.log(`Fetching URL: ${url}`);
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': USER_AGENT,
+        'Accept': 'application/json',
+      },
+    });
 
-        const data = await response.json();
-        return res.json(data);
-    } catch (error) {
-        console.error(`Error fetching ${url}:`, error.message);
-        return res.status(500).json({ error: error.message || 'Error fetching data' });
+    if (!response.ok) {
+      return res
+        .status(response.status)
+        .json({ error: `HTTP error. status: ${response.status}` });
     }
+
+    const data = await response.json();
+    return res.json(data);
+  } catch (error) {
+    console.error(`Error fetching ${url}:`, error.message);
+    return res
+      .status(500)
+      .json({ error: error.message || 'Error fetching data' });
+  }
 };
 
-// routes
+// ——— routes —————————————————————————————————————————————
+
 app.get('/api/versions/current', (req, res) => fetchData('/versions/current', res));
 
 app.get('/api/versions/future', (req, res) => fetchData('/versions/future', res));
@@ -59,6 +72,10 @@ app.get('/api/status/exploits/:exploit', (req, res) => {
 });
 
 app.get('/api/health', (req, res) => fetchData('/health', res));
+
+app.get('/api/versions/past', (req, res) =>
+  fetchData('https://weao.xyz/api/versions/past', res, true)
+);
 
 // this is random dont ask
 // app.get('/', (req, res) => {
