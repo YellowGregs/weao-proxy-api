@@ -2,6 +2,9 @@
 
 I decided to create this proxy server to access the [Whatexpsare.online](https://whatexpsare.online/) API by adding the necessary `User-Agent` header to requests. This ensures that your requests to the API are not blocked by Cloudflare.
 
+- fixed up my weao proxy url i didnt even know it was down
+
+
 ## Purpose
 
 When I was developing a simple template website using the Whatexpsare.online API, I encountered an issue with the requests being blocked due to CORS restrictions. After discussing this with the API owner, we couldn't find a solution immediately, though he did mention he would fix the CORS issue. Therefore, with his permission, I created this open-source proxy server to make the API accessible to everyone without restrictions.
